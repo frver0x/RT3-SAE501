@@ -1,9 +1,8 @@
 # RT3-SAE501
 Réalisation d’un outil logiciel de capture et de décodage de trame TOIP
 
-# Structure du projet 
-___
-
+## Structure du projet
+```text
 RT3-SAE501/
 ├── packages/
 │   └── wisucore/ 
@@ -14,14 +13,12 @@ RT3-SAE501/
 │   └── gui/
 ├── deploy/
 │   ├── compose/
-│   ├── helm/toip-analyzer/
 │   ├── ansible/
 │   ├── asterisk/ 
 │   └── phones/grandstream/
 ├── docs/
 │   ├── user/  dev/  adr/  rgpd/
-│   └── meetings/{internal,approvals}/
+│   └── meetings/
 ├── .gitignore
 ├── LICENSE  # GPLv3
 └── README.md
-
