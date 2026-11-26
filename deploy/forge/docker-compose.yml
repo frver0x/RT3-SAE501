@@ -2,6 +2,14 @@ services:
   forgejo:
     image: codeberg.org/forgejo/forgejo:15.0.12
     restart: unless-stopped
+    environment:
+      FORGEJO__server__ROOT_URL: http://localhost:3000/
+      FORGEJO__server__DISABLE_SSH: "true"
+      FORGEJO__database__DB_TYPE: sqlite3
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__security__GLOBAL_TWO_FACTOR_REQUIREMENT: all
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
     volumes:
       - ./data:/data
     ports:
