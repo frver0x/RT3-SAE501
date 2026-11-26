@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# En plus : 
+
+apps/lib64/
+apps/lib/
+apps/pyvenv.cfg
+apps/bin/
