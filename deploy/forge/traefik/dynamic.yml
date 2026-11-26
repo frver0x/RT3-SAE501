@@ -1,0 +1,20 @@
+http:
+  routers:
+    forge:
+      rule: Host(`localhost`)
+      service: forge
+      entryPoints: [websecure]
+      middlewares: [crowdsec]
+      tls: {}
+  middlewares:
+    crowdsec:
+      plugin:
+        crowdsec-bouncer:
+          enabled: true
+          crowdsecLapiKey: '{{ env "CROWDSEC_BOUNCER_KEY" }}'
+          crowdsecLapiHost: "crowdsec:8080"
+  services:
+    forge:
+      loadBalancer:
+        servers:
+          - url: http://forgejo:3000

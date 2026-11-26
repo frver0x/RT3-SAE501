@@ -2,14 +2,33 @@ services:
   traefik:
     image: traefik:v3.8.0
     restart: unless-stopped
+    depends_on: [crowdsec]
+    environment:
+      CROWDSEC_BOUNCER_KEY: ${CROWDSEC_BOUNCER_KEY}
     command:
       - --entryPoints.websecure.address=:443
       - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --accessLog=true
+      - --accessLog.filePath=/var/log/traefik/access.log
+      - --experimental.plugins.crowdsec-bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.crowdsec-bouncer.version=v1.3.5
     ports:
       - "127.0.0.1:8443:443"
     volumes:
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - traefik-logs:/var/log/traefik
+    networks: [front]
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.8.2
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/base-http-scenarios"
+      BOUNCER_KEY_traefik: ${CROWDSEC_BOUNCER_KEY}
+    volumes:
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - traefik-logs:/var/log/traefik:ro
+      - crowdsec-data:/var/lib/crowdsec/data
+      - crowdsec-config:/etc/crowdsec
     networks: [front]
 
   forgejo:
@@ -29,3 +48,8 @@ services:
 
 networks:
   front: {}
+
+volumes:
+  traefik-logs:
+  crowdsec-data:
+  crowdsec-config:
