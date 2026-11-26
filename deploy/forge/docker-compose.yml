@@ -1,9 +1,22 @@
 services:
+  traefik:
+    image: traefik:v3.8.0
+    restart: unless-stopped
+    command:
+      - --entryPoints.websecure.address=:443
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --accessLog=true
+    ports:
+      - "127.0.0.1:8443:443"
+    volumes:
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+    networks: [front]
+
   forgejo:
     image: codeberg.org/forgejo/forgejo:15.0.12
     restart: unless-stopped
     environment:
-      FORGEJO__server__ROOT_URL: http://localhost:3000/
+      FORGEJO__server__ROOT_URL: https://localhost:8443/
       FORGEJO__server__DISABLE_SSH: "true"
       FORGEJO__database__DB_TYPE: sqlite3
       FORGEJO__security__INSTALL_LOCK: "true"
@@ -12,5 +25,7 @@ services:
       FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
     volumes:
       - ./data:/data
-    ports:
-      - "127.0.0.1:3000:3000"
+    networks: [front]
+
+networks:
+  front: {}
